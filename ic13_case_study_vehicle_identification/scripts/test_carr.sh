@@ -1,0 +1,1 @@
+python test_cars.py -c checkpoints -p vggnet -e 3

@@ -1,0 +1,1 @@
+tensorboard --logdir ~/PycharmProjects/computer_vision/ic18_ssd/dlib_front_and_rear_vechicles_v1/experiments/

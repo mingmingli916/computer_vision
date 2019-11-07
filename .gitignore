@@ -1,0 +1,5 @@
+.idea
+dataset
+*__pycache__*
+*.log
+models

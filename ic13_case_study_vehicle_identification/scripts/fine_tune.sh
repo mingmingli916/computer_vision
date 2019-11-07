@@ -1,0 +1,1 @@
+python fine_tune_car.py -v vgg16/vgg16 -c checkpoints -p vggnet
