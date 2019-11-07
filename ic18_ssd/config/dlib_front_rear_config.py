@@ -1,7 +1,7 @@
 import os
 
 # base path for front/rear vehicle dataset
-BASE_PATH = '/home/hack/PycharmProjects/computer_vision/ic18_ssd/dlib_front_and_rear_vechicles_v1'
+BASE_PATH = '/home/hack/PycharmProjects/computer_vision/dataset/dlib_front_and_rear_vechicles_v1'
 
 # path to training and testing xml file
 TRAIN_XML = os.path.sep.join([BASE_PATH, 'training.xml'])

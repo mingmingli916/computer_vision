@@ -4,6 +4,8 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+import os
+from imutils import paths
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", required=True, help="base path for frozen checkpoint detection graph")
@@ -15,6 +17,7 @@ ap.add_argument("-c", "--min-confidence", type=float, default=0.5,
 args = vars(ap.parse_args())
 
 # initialize a set of colors for class labels
+np.random.seed(3)
 COLORS = np.random.uniform(0, 255, size=(args['num_classes'], 3))
 
 # initialize the model
@@ -54,51 +57,63 @@ with model.as_default():
         # These references will enable us to access their associated values
         # after passing the image through the network.
 
-        # load image
-        image = cv2.imread(args['image'])
-        h, w = image.shape[:2]
+        # initialize the list of image paths as just a single image
+        image_paths = [args['image']]
 
-        # check to see if we should resize along the width
-        if w > h and w > 1000:
-            image = imutils.resize(image, width=1000)
-        elif h > w and h > 1000:
-            image = imutils.resize(image, height=1000)
+        # if the input path is actually a directory, then list all image paths in the directory
+        if os.path.isdir(args['image']):
+            image_paths = sorted(list(paths.list_images(args['image'])))
 
-        # prepare the image for detection
-        h, w = image.shape[:2]
-        output = image.copy()
-        image = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2RGB)  # RGB in PIL; BGR in cv2
-        image = np.expand_dims(image, axis=0)
+        for image_path in image_paths:
+            # load image
+            image = cv2.imread(image_path)
+            h, w = image.shape[:2]
 
-        # perform inference and compute the bounding boxes,
-        # probabilities, and class labels
-        boxes, scores, labels, N = sess.run([boxes_tensor, scores_tensor, classes_tensor, num_detections],
-                                            feed_dict={image_tensor: image})
+            # check to see if we should resize along the width
+            if w > h and w > 1000:
+                image = imutils.resize(image, width=1000)
+            elif h > w and h > 1000:
+                image = imutils.resize(image, height=1000)
 
-        # squeeze the lists into a single dimension (expand_dims previously)
-        boxes = np.squeeze(boxes)
-        scores = np.squeeze(scores)
-        labels = np.squeeze(labels)
+            # prepare the image for detection
+            h, w = image.shape[:2]
+            output = image.copy()
+            image = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2RGB)  # RGB in PIL; BGR in cv2
+            image = np.expand_dims(image, axis=0)
 
-        # loop over the bounding box predictions
-        for box, score, label in zip(boxes, scores, labels):
-            if score < args['min_confidence']:
-                continue
+            # perform inference and compute the bounding boxes,
+            # probabilities, and class labels
+            boxes, scores, labels, N = sess.run([boxes_tensor, scores_tensor, classes_tensor, num_detections],
+                                                feed_dict={image_tensor: image})
 
-            # scale the bounding box from the range [0,1] to [w,h]
-            starty, startx, endy, endx = box
-            startx = int(startx * w)
-            starty = int(starty * h)
-            endx = int(endx * w)
-            endy = int(endy * h)
+            # squeeze the lists into a single dimension (expand_dims previously)
+            boxes = np.squeeze(boxes)
+            scores = np.squeeze(scores)
+            labels = np.squeeze(labels)
 
-            # draw the prediction on the output image
-            label = category_idx[label]
-            idx = int(label['id']) - 1
-            label = '{}: {:.2f}'.format(label['name'], score)
-            cv2.rectangle(output, (startx, starty), (endx, endy), COLORS[idx], 2)
-            y = starty - 10 if starty - 10 > 10 else starty + 10
-            cv2.putText(output, label, (startx, y), cv2.FONT_HERSHEY_SIMPLEX, .3, COLORS[idx], 1)
+            # loop over the bounding box predictions
+            for box, score, label in zip(boxes, scores, labels):
+                if score < args['min_confidence']:
+                    continue
 
-        cv2.imshow('Output', output)
-        cv2.waitKey()
+                # scale the bounding box from the range [0,1] to [w,h]
+                starty, startx, endy, endx = box
+                startx = int(startx * w)
+                starty = int(starty * h)
+                endx = int(endx * w)
+                endy = int(endy * h)
+
+                # draw the prediction on the output image
+                label = category_idx[label]
+                idx = int(label['id']) - 1
+                label = '{}: {:.2f}'.format(label['name'], score)
+                cv2.rectangle(output, (startx, starty), (endx, endy), COLORS[idx], 3)
+                y = starty - 10 if starty - 10 > 10 else starty + 10
+                cv2.putText(output, label, (startx, y), cv2.FONT_HERSHEY_SIMPLEX, .6, COLORS[idx], 2)
+                cv2.putText(output, 'MINGMING LI', (10, 20), cv2.FONT_HERSHEY_SIMPLEX, .6, (0, 255, 0), 2)
+
+            cv2.imshow('Output', output)
+
+            # if the 'q' key is pressed, stop the loop
+            if cv2.waitKey(0) & 0xFF == ord('q'):
+                break
