@@ -21,7 +21,7 @@ from os import path
 
 # define the base path to where the ImageNet dataset and devkit are stored on disk
 # containing Annotations, Data, ImageSets and devkit
-BASE_PATH = '/media/hack/b0802883-dbd6-4644-8e87-1a0350b87ac7/datasets/imagenet_object_localization/ILSVRC'
+BASE_PATH = '/home/sr/data/tiny-imagenet-200/'
 
 # based on the base path, derive the images base path, image sets path, and devkit path
 IMAGES_PATH = path.sep.join([BASE_PATH, 'Data/CLS-LOC'])  # Data, train, val, test

@@ -4,7 +4,7 @@ import numpy as np
 import argparse
 import imutils
 import cv2
-from ic11_case_emotion_recognition.emotion_recognition.config import emotion_config as config
+from ic11_case_emotion_recognition.config import emotion_config as config
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()

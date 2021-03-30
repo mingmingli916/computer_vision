@@ -1,4 +1,4 @@
-from ic11_case_emotion_recognition.emotion_recognition.config import emotion_config as config
+from ic11_case_emotion_recognition.config import emotion_config as config
 from pyimagesearch.io.hdf5datasewriter import HDF5DatasetWriter
 import numpy as np
 

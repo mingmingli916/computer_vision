@@ -1,4 +1,4 @@
-from ic11_case_emotion_recognition.emotion_recognition.config import emotion_config as config
+from ic11_case_emotion_recognition.config import emotion_config as config
 from pyimagesearch.preprocessing.imagetoarraypreprocessor import ImageToArrayPreprocessor
 from pyimagesearch.io.hdf5datasetgenerator import HDF5DatasetGenerator
 from keras.preprocessing.image import ImageDataGenerator

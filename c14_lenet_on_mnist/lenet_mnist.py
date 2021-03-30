@@ -12,6 +12,7 @@ import numpy as np
 # dataset then the 55MB download may take a minute)
 print("[INFO] accessing MNIST...")
 dataset = datasets.fetch_mldata("MNIST Original")
+# dataset = datasets.fetch_openml('MNIST Original')
 data = dataset.data
 data = data / 255.0
 targets = dataset.target.astype('int')
@@ -19,13 +20,6 @@ targets = dataset.target.astype('int')
 # if we are using "channels first" ordering, then reshape the
 # design matrix such that the matrix is:
 # num_samples x depth x rows x columns
-if K.image_data_format() == "channels_first":
-    data = data.reshape(data.shape[0], 1, 28, 28)
-# otherwise, we are using "channels last" ordering, so the design
-# matrix shape should be: num_samples x rows x columns x depth
-else:
-    data = data.reshape(data.shape[0], 28, 28, 1)
-
 # scale the input data to the range [0, 1] and perform a train/test split
 trainX, testX, trainY, testY = train_test_split(data, targets, test_size=0.25, random_state=42)
 
